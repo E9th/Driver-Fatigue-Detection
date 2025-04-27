@@ -30,15 +30,11 @@
     <label for="driver_license">เลขใบขับขี่:</label><br>
     <input type="text" id="driver_license" name="driver_license" required><br><br>
 
-    <!-- เพิ่มฟิลด์รหัสเชิญ -->
-    <label for="invite_code">รหัสลงทะเบียน:</label><br>
-    <input type="text" id="invite_code" name="invite_code" required><br><br>
-
     <button type="submit">ลงทะเบียน</button>
   </form>
 
   <script>
-    // Firebase config and initialization
+    // Your Firebase config and initialization
     const firebaseConfig = {
       apiKey: "AIzaSyC7Syu0aTE5WkAr7cMWdyllo5F6g--NsxM",
       authDomain: "driver-fatigue-detection.firebaseapp.com",
@@ -56,14 +52,6 @@
     document.getElementById('register-form').addEventListener('submit', function(e) {
       e.preventDefault();
 
-      const inviteCode = document.getElementById('invite_code').value.trim();
-
-      // เช็กรหัสเชิญก่อน
-      if (inviteCode !== "lnwza") {
-        alert('รหัสลงทะเบียนไม่ถูกต้อง กรุณาติดต่อผู้ดูแลระบบ');
-        return; // หยุดไม่ให้ไปต่อ
-      }
-
       const firstName = document.getElementById('first_name').value;
       const lastName = document.getElementById('last_name').value;
       const username = document.getElementById('username').value;
@@ -76,15 +64,17 @@
         first_name: firstName,
         last_name: lastName,
         username: username,
-        password: password, // *** (อย่าลืมถ้ามีเวลาควรเข้ารหัส Password ด้วย) ***
+        password: password, // Encrypt the password for better security
         email: email,
         license_plate: licensePlate,
         driver_license: driverLicense,
         created_at: new Date().toISOString(),
       };
 
+      // Randomly generate a user code (you can use a UUID or any unique identifier)
       const userCode = generateUserCode();
 
+      // Save user data to Firebase
       database.ref('users/' + userCode + '/profile').set(userData)
         .then(() => {
           alert('ลงทะเบียนสำเร็จ!');
@@ -97,6 +87,7 @@
     });
 
     function generateUserCode() {
+      // Generate a random user code (you can also use UUID or other strategies)
       return 'user_' + Math.random().toString(36).substr(2, 9);
     }
   </script>
