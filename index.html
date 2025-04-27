@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Driver Monitoring - Register</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+</head>
+<body>
+  <h1>ลงทะเบียนผู้ใช้งาน</h1>
+  <form id="register-form">
+    <label for="first_name">ชื่อ:</label><br>
+    <input type="text" id="first_name" name="first_name" required><br><br>
+
+    <label for="last_name">นามสกุล:</label><br>
+    <input type="text" id="last_name" name="last_name" required><br><br>
+
+    <label for="username">ชื่อผู้ใช้:</label><br>
+    <input type="text" id="username" name="username" required><br><br>
+
+    <label for="password">รหัสผ่าน:</label><br>
+    <input type="password" id="password" name="password" required><br><br>
+
+    <label for="email">อีเมล:</label><br>
+    <input type="email" id="email" name="email" required><br><br>
+
+    <label for="license_plate">ป้ายทะเบียนรถ:</label><br>
+    <input type="text" id="license_plate" name="license_plate" required><br><br>
+
+    <label for="driver_license">เลขใบขับขี่:</label><br>
+    <input type="text" id="driver_license" name="driver_license" required><br><br>
+
+    <button type="submit">ลงทะเบียน</button>
+  </form>
+
+  <script>
+    // Your Firebase config and initialization
+    const firebaseConfig = {
+      apiKey: "AIzaSyC7Syu0aTE5WkAr7cMWdyllo5F6g--NsxM",
+      authDomain: "driver-fatigue-detection.firebaseapp.com",
+      databaseURL: "https://driver-fatigue-detection-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "driver-fatigue-detection",
+      storageBucket: "driver-fatigue-detection.firebasestorage.app",
+      messagingSenderId: "1086008277749",
+      appId: "1:1086008277749:web:5e075a8170f36bd4dc63bc",
+      measurementId: "G-LYK7JQCK4Y"
+    };
+
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    document.getElementById('register-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const firstName = document.getElementById('first_name').value;
+      const lastName = document.getElementById('last_name').value;
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const email = document.getElementById('email').value;
+      const licensePlate = document.getElementById('license_plate').value;
+      const driverLicense = document.getElementById('driver_license').value;
+
+      const userData = {
+        first_name: firstName,
+        last_name: lastName,
+        username: username,
+        password: password, // Encrypt the password for better security
+        email: email,
+        license_plate: licensePlate,
+        driver_license: driverLicense,
+        created_at: new Date().toISOString(),
+      };
+
+      // Randomly generate a user code (you can use a UUID or any unique identifier)
+      const userCode = generateUserCode();
+
+      // Save user data to Firebase
+      database.ref('users/' + userCode + '/profile').set(userData)
+        .then(() => {
+          alert('ลงทะเบียนสำเร็จ!');
+          document.getElementById('register-form').reset();
+        })
+        .catch((error) => {
+          console.error('Error writing to Firebase:', error);
+          alert('เกิดข้อผิดพลาด กรุณาลองใหม่');
+        });
+    });
+
+    function generateUserCode() {
+      // Generate a random user code (you can also use UUID or other strategies)
+      return 'user_' + Math.random().toString(36).substr(2, 9);
+    }
+  </script>
+</body>
+</html>
